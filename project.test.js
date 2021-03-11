@@ -140,15 +140,15 @@ describe('server.js', () => {
   })
   describe('7 [POST] /api/users/:id/posts', () => {
     it('creates a new user post in the database', async () => {
-      await request(server).post('/api/users/1/posts').send({ text: 'foo' })
+      await request(server).post('/api/users/1/posts').send({ text: 'foo', user_id: 1 })
       let posts = await db('posts').where('user_id', 1)
       expect(posts).toHaveLength(initialPosts.filter(p => p.user_id == 1).length + 1)
-      await request(server).post('/api/users/1/posts').send({ text: 'bar' })
+      await request(server).post('/api/users/1/posts').send({ text: 'bar', user_id: 1 })
       posts = await db('posts').where('user_id', 1)
       expect(posts).toHaveLength(initialPosts.filter(p => p.user_id == 1).length + 2)
     })
     it('responds with the newly created user post', async () => {
-      let res = await request(server).post('/api/users/1/posts').send({ text: 'foo' })
+      let res = await request(server).post('/api/users/1/posts').send({ text: 'foo' , user_id: 1})
       expect(res.body).toHaveProperty('id')
       expect(res.body).toMatchObject({ text: 'foo' })
     })

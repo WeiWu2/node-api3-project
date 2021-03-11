@@ -27,31 +27,32 @@ router.post('/', middleware.validateUser,(req, res, next) => {
 });
 
 router.put('/:id',middleware.validateUserId, middleware.validateUser, (req, res,next) => {
-  Users.update(req.user).then((user) => {
-    res.status(200).json(user)
+  Users.update(req.params.id ,req.body).
+  then(() => {
+      Users.getById(req.params.id).then((user) => {
+        res.status(200).json(user)
+      })
   })
   .catch(next)
 });
 
 router.delete('/:id',middleware.validateUserId, (req, res,next) => {
-    Users.delete(req.user)
-    .then((user) => {
-      res.json(user)
+    Users.remove(req.params.id)
+    .then(() => {
+      res.json(req.user)
     })
     .catch(next)
 });
 
 router.get('/:id/posts',middleware.validateUserId, (req, res,next) => {
-  Posts.getById(req.params.id)
+  Users.getUserPosts(req.params.id)
   .then((posts) => {
       res.json(posts)
   })
   .catch(next)
-  // RETURN THE ARRAY OF USER POSTS
-  // this needs a middleware to verify user id
 });
 
-router.post('/:id/posts',middleware.validateUserId, middleware.validateUser, (req, res) => {
+router.post('/:id/posts',middleware.validateUserId, middleware.validatePost, (req, res, next) => {
 
     Posts.insert(req.body)
     .then((post) => {
